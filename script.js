@@ -40,7 +40,7 @@ async function telo(){
     let sum = [];
 
     function addCart(e, idx){
-        e.stopPropagation()
+        e.stopPropagation();
         const cartContent = document.querySelector(".cart__content");
         const count = document.querySelector(".cart__count");
 
@@ -88,6 +88,8 @@ async function telo(){
                         cartImg.style.cssText = "display: block";
                         const cartText = document.querySelector(".cart__content-text");
                         cartText.style.cssText = "display: block";
+                        const finishCart = document.querySelector(".cart__finish");
+                        finishCart.style.cssText = "display: none";
                     }
                 }else{
                     activeButtonText.textContent = +activeButtonText.textContent - 1;
@@ -106,6 +108,9 @@ async function telo(){
             const cartItemContentDescriptionPrice = document.createElement("p");
             const cartItemContentDescriptionAllprice = document.createElement("p");
 
+            const imgClose = document.createElement("img");
+            imgClose.src = "./assets/images/icon-remove-item.svg";
+            imgClose.className = "cart__content-card-closeButton";
             
 
             cartItemContentDescription.appendChild(cartItemContentDescriptionCount);
@@ -114,6 +119,7 @@ async function telo(){
             cartItemContent.appendChild(cartItemContentTitle);
             cartItemContent.appendChild(cartItemContentDescription);
             cartItem.appendChild(cartItemContent);
+            cartItem.appendChild(imgClose);
 
             cartItem.className = "cart__content-card";
             cartItemContent.className = "cart__content-card-content";
@@ -138,6 +144,8 @@ async function telo(){
                 cartImg.style.cssText = "display: none";
                 const cartText = document.querySelector(".cart__content-text");
                 cartText.style.cssText = "display: none";
+                const finishCart = document.querySelector(".cart__finish");
+                finishCart.style.cssText = "display: block";
             }
 
             function finishPrice(arr){
@@ -150,6 +158,107 @@ async function telo(){
             }
             totalPrice.textContent = "$" + finishPrice(sum);
 
+            
+            imgClose.addEventListener("click", () => {
+                cartItem.remove();
+                sum[idx] = 0;
+                activeButton.classList.remove("active");
+                activeButton.innerHTML = '<img src="./assets/images/icon-add-to-cart.svg" alt=""> Add to Cart';
+                countProducts -= +activeButtonText.textContent;
+                count.textContent = countProducts;
+                totalPrice.textContent = "$" + finishPrice(sum);
+
+                if(count.textContent == 0){
+                    const cartImg = document.querySelector(".cart__content-img");
+                    cartImg.style.cssText = "display: block";
+                    const cartText = document.querySelector(".cart__content-text");
+                    cartText.style.cssText = "display: block";
+                    const finishCart = document.querySelector(".cart__finish");
+                    finishCart.style.cssText = "display: none";
+                }
+            });
+            
+            const finishButton = document.querySelector(".cart__finish-button");
+
+            finishButton.addEventListener("click", (e) => {
+
+                document.body.classList.add("no-scroll");
+                const modal = document.querySelector(".modal");
+                modal.classList.remove("modal--hidden");
+
+                const modalCart = document.querySelector(".modal__content-cart");
+                
+                const modalItem = document.createElement("div");
+                modalItem.className = "modal__content-cart-card";
+                
+                const modalItemAllPrice = document.createElement("p");
+                modalItemAllPrice.className = "modal__content-cart-card-allPrice";
+                
+                const modalItemContent = document.createElement("div");
+                modalItemContent.className = "modal__content-cart-card-content";
+
+                const modalItemContentImg = document.createElement("img");
+                modalItemContentImg.className = "modal__content-cart-card-content-img";
+
+                const modalItemContentDescription = document.createElement("div");
+                modalItemContentDescription.className = "modal__content-cart-card-content-description";
+
+                const modalItemContentDescriptionTitle = document.createElement("h4");
+                modalItemContentDescriptionTitle.className = "modal__content-cart-card-content-description-title";
+
+                const modalItemContentDescriptionInfo = document.createElement("div");
+                modalItemContentDescriptionInfo.className = "modal__content-cart-card-content-description-info";
+
+                const modalItemContentDescriptionInfoCount = document.createElement("p");
+                modalItemContentDescriptionInfoCount.className = "modal__content-cart-card-content-description-info-count";
+
+                const modalItemContentDescriptionInfoPrice = document.createElement("p");
+                modalItemContentDescriptionInfoPrice.className = "modal__content-cart-card-content-description-info-price";
+                
+                modalItemContentDescriptionInfo.appendChild(modalItemContentDescriptionInfoCount);
+                modalItemContentDescriptionInfo.appendChild(modalItemContentDescriptionInfoPrice);
+                
+                modalItemContentDescription.appendChild(modalItemContentDescriptionTitle);
+                modalItemContentDescription.appendChild(modalItemContentDescriptionInfo);
+
+                modalItemContent.appendChild(modalItemContentImg);
+                modalItemContent.appendChild(modalItemContentDescription);
+                
+                modalItem.appendChild(modalItemContent);
+                modalItem.appendChild(modalItemAllPrice);
+                
+                modalCart.appendChild(modalItem);
+                
+                modalItemContentImg.src = products[idx].image.thumbnail;
+                modalItemAllPrice.textContent = "$" + (+activeButtonText.textContent * products[idx].price).toFixed(2);
+                modalItemContentDescriptionTitle.textContent = products[idx].name;
+                modalItemContentDescriptionInfoCount.textContent = +activeButtonText.textContent + "x";
+                modalItemContentDescriptionInfoPrice.textContent = "@$" + products[idx].price.toFixed(2);
+                
+                
+                // const cartTotal = document.querySelector(".modal__content-cart-total");
+
+                // const cartTotalText = document.createElement("p");
+                // cartTotalText.className = "modal__content-cart-total-text";
+
+                // const cartTotalPrice = document.createElement("p");
+                // cartTotalPrice.className = "modal__content-cart-total-price";
+
+                // cartTotal.appendChild(cartTotalText);
+                // cartTotal.appendChild(cartTotalPrice);
+                // cartTotalText.textContent = "Order Total";
+                // cartTotalPrice.textContent = "$" + finishPrice(sum);
+                // modalCart.appendChild(cartTotal);
+                
+                
+                modal.addEventListener("click", (e) => {
+                    if(e.target.classList.contains("modal")){
+                        modalCart.innerHTML = "";  //НЕ РАБОТАЕТ!!!
+                        modal.classList.add("modal--hidden");
+                        document.body.classList.remove("no-scroll");
+                    }
+                });
+            });
         }
     }
 
