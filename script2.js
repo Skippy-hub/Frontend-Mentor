@@ -1,9 +1,6 @@
 let products = [];
 let arrData = [];
-let cartItemsCount = [];
 let cartItems = [];
-let cartItemsClose = [];
-let cartItemsAllPrice = [];
 
 let modalImg;
 let modalAllPrice;
@@ -87,8 +84,8 @@ async function telo(){
                 count.textContent = countProducts;
                 arrData[idx].count++;
                 arrData[idx].fullPrice = arrData[idx].count * arrData[idx].price;
-                cartItemsAllPrice[idx].textContent = `$${arrData[idx].fullPrice.toFixed(2)}`;
-                cartItemsCount[idx].textContent = arrData[idx].count + "x";
+                cartItems[idx].allPrice.textContent = `$${arrData[idx].fullPrice.toFixed(2)}`;
+                cartItems[idx].count.textContent = arrData[idx].count + "x";
                 totalPrice.textContent = "$" + finishPrice();
             });
 
@@ -110,9 +107,9 @@ async function telo(){
                     countProducts--;
                     count.textContent = countProducts;
                     arrData[idx].count--;
-                    cartItemsCount[idx].textContent = arrData[idx].count + "x";
+                    cartItems[idx].count.textContent = arrData[idx].count + "x";
                     arrData[idx].fullPrice = arrData[idx].count * arrData[idx].price;
-                    cartItemsAllPrice[idx].textContent = `$${arrData[idx].fullPrice.toFixed(2)}`;
+                    cartItems[idx].allPrice.textContent = `$${arrData[idx].fullPrice.toFixed(2)}`;
                     totalPrice.textContent = "$" + finishPrice();
                 }
             });
@@ -129,7 +126,7 @@ async function telo(){
             }
         }
         
-        cartItemsClose[idx].addEventListener("click", () => {
+        cartItems[idx].close.addEventListener("click", () => {
             activeButton.classList.remove("active");
             activeButton.innerHTML = '<img src="./assets/images/icon-add-to-cart.svg" alt=""> Add to Cart';
             countProducts -= arrData[idx].count;
@@ -166,6 +163,21 @@ async function telo(){
                 }
             }
         }
+
+        // for(let i = 0; i < cards.length; i++){
+        //     for(let m = 0; m < arrData.length; m++){
+        //         if(!arrData[m]) continue;
+        //         if(cards[i].textContent == arrData[m].name){
+        //             createModal();
+        //             modalImg.src = arrData[i].image;
+        //             modalAllPrice.textContent = "$" + arrData[i].fullPrice.toFixed(2);
+        //             modalTitle.textContent = arrData[i].name;
+        //             modalCount.textContent = arrData[i].count + "x";
+        //             modalPrice.textContent = "@$" + arrData[i].price.toFixed(2);
+        //         }
+        //     }
+        //     console.log(cards[i].textContent);
+        // }
 
         modal.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -243,11 +255,13 @@ function createCartItem(idx){
     const cartContent = document.querySelector(".cart__content");
 
     cartContent.appendChild(cartItem);
-    cartItemsCount[idx] = cartItemContentDescriptionCount;
-    cartItems[idx] = cartItem;
-    cartItemsClose[idx] = imgClose;
-    cartItemsAllPrice[idx] = cartItemContentDescriptionAllprice;
-    
+
+    cartItems[idx] = {
+        "item": cartItem,
+        "count": cartItemContentDescriptionCount,
+        "close": imgClose,
+        "allPrice": cartItemContentDescriptionAllprice
+    }
     
     cartItemContentTitle.textContent = arrData[idx].name;
     cartItemContentDescriptionCount.textContent = arrData[idx].count + "x";
@@ -276,8 +290,8 @@ function emptyCart(){
 
 function deleteCard(idx, totalPrice){
     delete arrData[idx];
-    cartItems[idx].remove();
-    delete cartItems[idx];
+    cartItems[idx].item.remove();
+    delete cartItems[idx].item;
     totalPrice.textContent = "$" + finishPrice();
 }
 
